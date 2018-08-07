@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+
+import os
+import requests
+import json
+
+stocks = os.environ["stockstowatch"]
+d = requests.get("https://api.robinhood.com/quotes/?symbols="+stocks)
+loaded = json.loads(d.text)["results"]
+for i in range(len(loaded)):
+	last_trade_price = round(float(loaded[i]["last_trade_price"]),2)
+	last_close_price = round(float(loaded[i]["previous_close"]),2)
+	percent = round((((100*(last_trade_price)/(last_close_price)))-100),2)
+	end = " | " if (i!=len(loaded)-1) else ""
+	print(loaded[i]["symbol"] + " = " + str(percent) + "%,$"+str(last_trade_price)+end,end='')

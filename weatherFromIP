@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+import requests
+import json
+import sys
+
+#° F = 9/5 (K - 273) + 32
+def kelvinToFahrenheit(k): #api gives kelvin??
+	return ((9/5)*(k-273))+32
+
+ip = requests.get("https://api.ipify.org")
+if ip.status_code != 200:
+	print("n/a")
+	sys.exit(0)
+d = requests.get("http://api.ipstack.com/"+ip.text+"?access_key=6ec76005a69c40daed7cc39c60962e7d")
+
+zipC = json.loads(d.text)["zip"]
+
+d = requests.get("http://api.openweathermap.org/data/2.5/weather?zip="+zipC+"&APPID=826550e45a268e3ff874c0f2acf0710e")
+d = json.loads(d.text)["main"]["temp"]
+print(round(kelvinToFahrenheit(d),1))
+
+if(sys.argv[1] == "verbose"):
+	print(zipC)
